@@ -18,8 +18,13 @@ import java.util.Collection;
 
 public class AnimationManagers {
     public static void registerAnimationManagers() {
+        registerSetAngleManagers();
+        registerAnimateModelManagers();
+    }
+
+    private static void registerSetAngleManagers() {
         // TODO: a lot of these can be optimized by doing a value on init, since the value is never changed.
-        register(new Identifier("minecraft", "spider"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "spider"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart head : parts.get("head")) {
                 head.yaw = headYaw * 0.017453292F;
                 head.pitch = headPitch * 0.017453292F;
@@ -75,7 +80,7 @@ public class AnimationManagers {
                 }
             }
         });
-        register(new Identifier("minecraft", "creeper"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "creeper"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart part : parts.get("head")) {
                 part.yaw = headYaw * 0.017453292F;
                 part.pitch = headPitch * 0.017453292F;
@@ -96,7 +101,7 @@ public class AnimationManagers {
         });
 
 
-        register(new Identifier("minecraft", "armor_stand"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "armor_stand"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             ArmorStandEntity armorStandEntity = (ArmorStandEntity) entity;
             for (ModelPart part : parts.get("head")) {
                 part.pitch = 0.017453292F * armorStandEntity.getHeadRotation().getPitch();
@@ -137,7 +142,7 @@ public class AnimationManagers {
                 part.roll = 0.017453292F * armorStandEntity.getBodyRotation().getRoll();
             }
         });
-        register(new Identifier("minecraft", "bat"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "bat"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             if (((BatEntity) entity).isRoosting()) {
                 for (ModelPart part : parts.get("body")) {
                     part.pitch = 3.1415927F;
@@ -192,10 +197,7 @@ public class AnimationManagers {
                 }
             }
         });
-        register(new Identifier("minecraft", "bee"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
-            for (ModelPart part : parts.get("stinger")) {
-                part.visible = !((BeeEntity) entity).hasStung();
-            }
+        registerSetAngles(new Identifier("minecraft", "bee"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart part : parts.get("body")) {
                 part.pitch = 0.0F;
                 part.pivotY = 19.0F;
@@ -281,18 +283,8 @@ public class AnimationManagers {
                     }
                 }
             }
-            // We can do this because that's how the animation progress is calculated for bees
-            // (return (float) entity.age + tickDelta;)
-            // Honestly, should be better (pass tickDelta in for example)
-            // But I'm too lazy. If bee animations change this might fuck up, but prob not
-            float bodyPitch = ((BeeEntity)entity).getBodyPitch(animationProgress-entity.age);
-            if (bodyPitch > 0) {
-                for (ModelPart part : parts.get("body")) {
-                    part.pitch = ModelUtil.interpolateAngle(part.pitch, 3.0915928F, bodyPitch);
-                }
-            }
         });
-        register(new Identifier("minecraft", "blaze"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "blaze"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart part : parts.get("head")) {
                 part.yaw = headYaw * 0.017453292F;
                 part.pitch = headPitch * 0.017453292F;
@@ -329,8 +321,8 @@ public class AnimationManagers {
                 ++f;
             }
         });
-        register(new Identifier("minecraft", "cave_spider"), CentimeInit.ANIMATION_MANAGER.get(new Identifier("minecraft", "spider")));
-        register(new Identifier("minecraft", "chicken"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "cave_spider"), CentimeInit.SET_ANGLES_ANIMATION_MANAGER.get(new Identifier("minecraft", "spider")));
+        registerSetAngles(new Identifier("minecraft", "chicken"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart part : parts.get("head")) {
                 part.pitch = headPitch * 0.017453292F;
                 part.yaw = headYaw * 0.017453292F;
@@ -351,12 +343,12 @@ public class AnimationManagers {
                 part.pitch = 1.5707964F;
             }
         });
-        register(new Identifier("minecraft", "cod"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "cod"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart part : parts.get("tail")) {
                 part.yaw = (entity.isTouchingWater()) ? 1.0F : 1.5F *0.45F * MathHelper.sin(0.6f * animationProgress);
             }
         });
-        register(new Identifier("minecraft", "cow"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "cow"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart part : parts.get("backLeftLeg")) {
                 part.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
             }
@@ -396,7 +388,7 @@ public class AnimationManagers {
                 }
             }
         });*/
-        register(new Identifier("minecraft", "endermite"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "endermite"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (int i = 0; i < 4; i++) {
                 for (ModelPart part : parts.get("body" + (i + 1))) {
                     part.yaw = MathHelper.cos(animationProgress * 0.9F + (float) i * 0.47123894f) * 0.03141593f * (float) (1 + Math.abs(i - 2));
@@ -404,16 +396,16 @@ public class AnimationManagers {
                 }
             }
         });
-        register(new Identifier("minecraft", "ghast"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "ghast"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (int i = 0; i < 9; i++) {
                 for (ModelPart part : parts.get("tentacle" + (i + 1))) {
                     part.pitch = 0.2F * MathHelper.sin(animationProgress * 0.3F + i) + 0.4F;
                 }
             }
         });
-        register(new Identifier("minecraft", "endermite"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {});
+        registerSetAngles(new Identifier("minecraft", "endermite"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {});
 
-        register(new Identifier("minecraft", "silverfish"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+        registerSetAngles(new Identifier("minecraft", "silverfish"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for(int i = 0; i < 7; i++) {
                 for (ModelPart part : parts.get("body" + (i + 1))) {
                     part.yaw = MathHelper.cos(animationProgress * 0.9F + (float) i * 0.47123894f) * 0.15707964f * (float) (1 + Math.abs(i - 2));
@@ -433,11 +425,30 @@ public class AnimationManagers {
                 part.pivotX = MathHelper.sin(animationProgress * 0.9F + 0.47123894f) * 0.62831855f;
             }
         });
-        register(new Identifier("minecraft", "pig"), CentimeInit.ANIMATION_MANAGER.get(new Identifier("minecraft", "cow")));
-        register(new Identifier("minecraft", "mooshroom"), CentimeInit.ANIMATION_MANAGER.get(new Identifier("minecraft", "cow")));
+        registerSetAngles(new Identifier("minecraft", "pig"), CentimeInit.SET_ANGLES_ANIMATION_MANAGER.get(new Identifier("minecraft", "cow")));
+        registerSetAngles(new Identifier("minecraft", "mooshroom"), CentimeInit.SET_ANGLES_ANIMATION_MANAGER.get(new Identifier("minecraft", "cow")));
     }
 
-    private static void register(Identifier entity, AnimationManager manager) {
-        Registry.register(CentimeInit.ANIMATION_MANAGER, entity, manager);
+    private static void registerAnimateModelManagers() {
+        registerAnimateModel(new Identifier("minecraft", "bee"), (Entity entity, float limbAngle, float limbDistance, float tickDelta, Multimap<String, ModelPart> parts) -> {
+            BeeEntity beeEntity = (BeeEntity) entity;
+            for (ModelPart part : parts.get("stinger")) {
+                part.visible = !beeEntity.hasStung();
+            }
+            float bodyPitch = beeEntity.getBodyPitch(tickDelta);
+            if (bodyPitch > 0.0F) {
+                for (ModelPart part : parts.get("body")) {
+                    part.pitch = ModelUtil.interpolateAngle(part.pitch, 3.0915928F, bodyPitch);
+                }
+            }
+        });
+    }
+
+    private static void registerSetAngles(Identifier entity, SetAnglesAnimationManager manager) {
+        Registry.register(CentimeInit.SET_ANGLES_ANIMATION_MANAGER, entity, manager);
+    }
+
+    private static void registerAnimateModel(Identifier entity, AnimateModelAnimationManager manager) {
+        Registry.register(CentimeInit.ANIMATE_MODEL_ANIMATION_MANAGER, entity, manager);
     }
 }

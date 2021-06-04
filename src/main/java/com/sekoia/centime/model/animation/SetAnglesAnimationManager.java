@@ -4,6 +4,6 @@ import com.google.common.collect.Multimap;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.entity.Entity;
 
-public interface AnimationManager {
+public interface SetAnglesAnimationManager {
     void setAngles(Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts);
 }
