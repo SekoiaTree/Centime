@@ -321,7 +321,62 @@ public class AnimationManagers {
                 ++f;
             }
         });
-        registerSetAngles(new Identifier("minecraft", "cave_spider"), CentimeInit.SET_ANGLES_ANIMATION_MANAGER.get(new Identifier("minecraft", "spider")));
+        registerSetAngles(new Identifier("minecraft", "cave_spider"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+            for (ModelPart head : parts.get("head")) {
+                head.yaw = headYaw * 0.017453292F;
+                head.pitch = headPitch * 0.017453292F;
+            }
+            final float f = 0.7853982F;
+            for (ModelPart rightBackLeg : parts.get("rightLeg4")) {
+                rightBackLeg.roll = -f;
+                rightBackLeg.yaw = f;
+            }
+            for (ModelPart leftBackLeg : parts.get("leftLeg4")) {
+                leftBackLeg.roll = f;
+                leftBackLeg.yaw = -f;
+            }
+            for (ModelPart rightFrontLeg : parts.get("rightLeg1")) {
+                rightFrontLeg.roll = -f;
+                rightFrontLeg.yaw = -f;
+            }
+            for (ModelPart leftFrontLeg : parts.get("leftLeg1")) {
+                leftFrontLeg.roll = f;
+                leftFrontLeg.yaw = f;
+            }
+            for (ModelPart rightBackMiddleLeg : parts.get("rightLeg3")) {
+                rightBackMiddleLeg.roll = -0.58119464F;
+                rightBackMiddleLeg.yaw = f/2;
+            }
+            for (ModelPart leftBackMiddleLeg : parts.get("leftLeg3")) {
+                leftBackMiddleLeg.roll = 0.58119464F;
+                leftBackMiddleLeg.yaw = -f/2;
+            }
+            for (ModelPart rightFrontMiddleLeg : parts.get("rightLeg2")) {
+                rightFrontMiddleLeg.roll = -0.58119464F;
+                rightFrontMiddleLeg.yaw = -f/2;
+            }
+            for (ModelPart leftFrontMiddleLeg : parts.get("leftLeg2")) {
+                leftFrontMiddleLeg.roll = 0.58119464F;
+                leftFrontMiddleLeg.yaw = f/2;
+            }
+            UnmodifiableIterator<Collection<ModelPart>> partNames = ImmutableList.of(
+                    parts.get("rightLeg4"), parts.get("leftLeg4"),
+                    parts.get("rightLeg2"), parts.get("leftLeg2"),
+                    parts.get("rightLeg3"), parts.get("leftLeg3"),
+                    parts.get("rightLeg1"), parts.get("leftLeg1")).iterator();
+            for (int i = 0; i < 4; i++) {
+                float sin = Math.abs(MathHelper.sin(limbAngle * 0.6662F + i*1.5707964F) * 0.4F) * limbDistance;
+                float cos = -MathHelper.cos(limbAngle * 1.3324f + i*1.5707964F) * 0.4F * limbDistance;
+                for (ModelPart m : partNames.next()) {
+                    m.roll += sin;
+                    m.yaw += cos;
+                }
+                for (ModelPart m : partNames.next()) {
+                    m.roll -= sin;
+                    m.yaw -= cos;
+                }
+            }
+        });
         registerSetAngles(new Identifier("minecraft", "chicken"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for (ModelPart part : parts.get("head")) {
                 part.pitch = headPitch * 0.017453292F;
@@ -403,7 +458,6 @@ public class AnimationManagers {
                 }
             }
         });
-        registerSetAngles(new Identifier("minecraft", "endermite"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {});
 
         registerSetAngles(new Identifier("minecraft", "silverfish"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
             for(int i = 0; i < 7; i++) {
@@ -425,8 +479,49 @@ public class AnimationManagers {
                 part.pivotX = MathHelper.sin(animationProgress * 0.9F + 0.47123894f) * 0.62831855f;
             }
         });
-        registerSetAngles(new Identifier("minecraft", "pig"), CentimeInit.SET_ANGLES_ANIMATION_MANAGER.get(new Identifier("minecraft", "cow")));
-        registerSetAngles(new Identifier("minecraft", "mooshroom"), CentimeInit.SET_ANGLES_ANIMATION_MANAGER.get(new Identifier("minecraft", "cow")));
+        // TODO these are the same as the cow stuff, but you can't just register it twice. Maybe some way to get around it and reduce duplication?
+        registerSetAngles(new Identifier("minecraft", "pig"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+            for (ModelPart part : parts.get("backLeftLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("backRightLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("frontLeftLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("frontRightLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("head")) {
+                part.pitch = headPitch * 0.017453292F;
+                part.yaw = headYaw * 0.017453292F;
+            }
+            for (ModelPart part : parts.get("torso")) {
+                part.pitch = 1.5707964F;
+            }
+        });
+        registerSetAngles(new Identifier("minecraft", "mooshroom"), (Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, Multimap<String, ModelPart> parts) -> {
+            for (ModelPart part : parts.get("backLeftLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("backRightLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("frontLeftLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("frontRightLeg")) {
+                part.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
+            }
+            for (ModelPart part : parts.get("head")) {
+                part.pitch = headPitch * 0.017453292F;
+                part.yaw = headYaw * 0.017453292F;
+            }
+            for (ModelPart part : parts.get("torso")) {
+                part.pitch = 1.5707964F;
+            }
+        });
     }
 
     private static void registerAnimateModelManagers() {
