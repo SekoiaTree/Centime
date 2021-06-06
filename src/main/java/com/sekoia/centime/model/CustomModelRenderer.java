@@ -35,6 +35,9 @@ public class CustomModelRenderer<T extends LivingEntity> extends EntityRenderer<
     @Override
     public void render(T entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         matrices.push();
+        model.handSwingProgress = entity.getHandSwingProgress(tickDelta);
+        model.child = entity.isBaby();
+        model.riding = entity.hasVehicle();
 
         float bodyYaw = MathHelper.lerpAngleDegrees(tickDelta, entity.prevBodyYaw, entity.bodyYaw);
         float absHeadYaw = MathHelper.lerpAngleDegrees(tickDelta, entity.prevHeadYaw, entity.headYaw);
