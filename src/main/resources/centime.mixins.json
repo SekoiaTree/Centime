@@ -5,9 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "EntityRendererAccessor",
-    "PackAdditionMixin",
-    "RenderDispatcherMixin",
-    "ResourceReloadMixin"
+    "RenderDispatcherMixin"
   ],
   "client": [
   ],

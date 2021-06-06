@@ -7,6 +7,8 @@ import com.sekoia.centime.model.feature.FeatureBuilder;
 import com.sekoia.centime.model.feature.FeatureBuilders;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
@@ -22,5 +24,11 @@ public class CentimeInit implements ClientModInitializer {
     public void onInitializeClient() {
         AnimationManagers.registerAnimationManagers();
         FeatureBuilders.registerFeatureBuilders();
+        MinecraftClient.getInstance().execute(() -> {
+            ModelLoader loader = new ModelLoader();
+            ((ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager()).registerListener(loader);
+            loader.addModels(MinecraftClient.getInstance().getResourceManager());
+            ((ModelRendererRebuilder) MinecraftClient.getInstance().getEntityRenderDispatcher()).rebuild();
+        });
     }
 }
