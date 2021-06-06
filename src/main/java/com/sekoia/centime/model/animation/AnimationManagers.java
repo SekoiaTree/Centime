@@ -3,7 +3,7 @@ package com.sekoia.centime.model.animation;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.UnmodifiableIterator;
-import com.sekoia.centime.CentimeInit;
+import com.sekoia.centime.Centime;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelUtil;
 import net.minecraft.entity.Entity;
@@ -540,10 +540,10 @@ public class AnimationManagers {
     }
 
     private static void registerSetAngles(Identifier entity, SetAnglesAnimationManager manager) {
-        Registry.register(CentimeInit.SET_ANGLES_ANIMATION_MANAGER, entity, manager);
+        Registry.register(Centime.SET_ANGLES_ANIMATION_MANAGER, entity, manager);
     }
 
     private static void registerAnimateModel(Identifier entity, AnimateModelAnimationManager manager) {
-        Registry.register(CentimeInit.ANIMATE_MODEL_ANIMATION_MANAGER, entity, manager);
+        Registry.register(Centime.ANIMATE_MODEL_ANIMATION_MANAGER, entity, manager);
     }
 }

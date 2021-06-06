@@ -31,7 +31,7 @@ public class RenderDispatcherMixin implements ModelRendererRebuilder {
     private <T extends Entity> void modelOverride(EntityType<T> entityType, EntityRenderer<? super T> entityRenderer, CallbackInfo ci) {
         if (!(entityRenderer instanceof LivingEntityRenderer)) {
             if (EntityTypeModelMap.isModelOverridden(entityType)) {
-                CentimeInit.LOGGER.error(String.format("Attempted to do CEM on non-living entity type %s, but this is not allowed!", Registry.ENTITY_TYPE.getId(entityType)));
+                Centime.LOGGER.error(String.format("Attempted to do CEM on non-living entity type %s, but this is not allowed!", Registry.ENTITY_TYPE.getId(entityType)));
             }
             return;
         }
@@ -46,7 +46,7 @@ public class RenderDispatcherMixin implements ModelRendererRebuilder {
         for (EntityType<?> type : this.renderers.keySet()) {
             if (!(this.renderers.get(type) instanceof LivingEntityRenderer || this.renderers.get(type) instanceof CustomModelRenderer)) {
                 if (EntityTypeModelMap.isModelOverridden(type)) {
-                    CentimeInit.LOGGER.error(String.format("Attempted to do CEM on non-living entity type %s, but this is not allowed!", Registry.ENTITY_TYPE.getId(type)));
+                    Centime.LOGGER.error(String.format("Attempted to do CEM on non-living entity type %s, but this is not allowed!", Registry.ENTITY_TYPE.getId(type)));
                 }
                 continue;
             }

@@ -2,7 +2,7 @@ package com.sekoia.centime.model;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.sekoia.centime.CentimeInit;
+import com.sekoia.centime.Centime;
 import com.sekoia.centime.model.animation.AnimateModelAnimationManager;
 import com.sekoia.centime.model.animation.SetAnglesAnimationManager;
 import net.minecraft.client.model.ModelPart;
@@ -66,9 +66,9 @@ public class CustomModel<E extends Entity> extends EntityModel<E> implements Fea
 
     @Override
     public void animateModel(E entity, float limbAngle, float limbDistance, float tickDelta) {
-        AnimateModelAnimationManager manager = CentimeInit.ANIMATE_MODEL_ANIMATION_MANAGER.get(Registry.ENTITY_TYPE.getId(entity.getType()));
+        AnimateModelAnimationManager manager = Centime.ANIMATE_MODEL_ANIMATION_MANAGER.get(Registry.ENTITY_TYPE.getId(entity.getType()));
         if (manager == null) {
-            CentimeInit.LOGGER.warn(String.format("Animations not implemented for %s, yet CEM is being used!", entity.getType()));
+            Centime.LOGGER.warn(String.format("Animations not implemented for %s, yet CEM is being used!", entity.getType()));
             return;
         }
         manager.animateModel(entity, limbAngle, limbDistance, tickDelta, animatedParts);
@@ -76,9 +76,9 @@ public class CustomModel<E extends Entity> extends EntityModel<E> implements Fea
 
     @Override
     public void setAngles(E entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        SetAnglesAnimationManager manager = CentimeInit.SET_ANGLES_ANIMATION_MANAGER.get(Registry.ENTITY_TYPE.getId(entity.getType()));
+        SetAnglesAnimationManager manager = Centime.SET_ANGLES_ANIMATION_MANAGER.get(Registry.ENTITY_TYPE.getId(entity.getType()));
         if (manager == null) {
-            CentimeInit.LOGGER.warn(String.format("Animations not implemented for %s, yet CEM is being used!", entity.getType()));
+            Centime.LOGGER.warn(String.format("Animations not implemented for %s, yet CEM is being used!", entity.getType()));
             return;
         }
         manager.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch, animatedParts);

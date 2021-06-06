@@ -14,7 +14,7 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class CentimeInit implements ClientModInitializer {
+public class Centime implements ClientModInitializer {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "centime";
     public static final SimpleRegistry<SetAnglesAnimationManager> SET_ANGLES_ANIMATION_MANAGER = FabricRegistryBuilder.createSimple(SetAnglesAnimationManager.class, new Identifier(MODID, "set_angles_animation_manager")).buildAndRegister();

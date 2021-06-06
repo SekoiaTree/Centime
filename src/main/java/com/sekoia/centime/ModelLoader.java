@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -30,23 +29,31 @@ public class ModelLoader implements SimpleResourceReloadListener<Void> {
     public void addModels(ResourceManager manager) {
         manager.streamResourcePacks().forEach((ResourcePack resourcePack) -> {
             for (String namespace : resourcePack.getNamespaces(ResourceType.CLIENT_RESOURCES)) {
-                for (Identifier id : resourcePack.findResources(ResourceType.CLIENT_RESOURCES, namespace, "models", 1,s -> s.endsWith(".cem"))) {
-                    addSimpleModel(resourcePack, id);
+                for (Identifier id : resourcePack.findResources(ResourceType.CLIENT_RESOURCES, namespace, "models", 1,s -> s.endsWith(".cem") || s.endsWith(".ecem"))) {
+                    if (id.getPath().endsWith(".cem")) {
+                        addSimpleModel(resourcePack, id);
+                    } else {
+                        addElaborateModel(resourcePack, id);
+                    }
                 }
             }
         });
     }
 
+    private void addElaborateModel(ResourcePack resourcePack, Identifier id) {
+        Centime.LOGGER.info("Loading elaborate model: {}", id);
+    }
+
     private void addSimpleModel(ResourcePack resourcePack, Identifier id) {
-        CentimeInit.LOGGER.info("Loading: {}", id);
+        Centime.LOGGER.info("Loading: {}", id);
         InputStream input;
         try {
             input = resourcePack.open(ResourceType.CLIENT_RESOURCES, id);
         } catch (IOException e) {
-            CentimeInit.LOGGER.error("Error loading {}. Please report this to the tracker including the resource pack you used.", id);
+            Centime.LOGGER.error("Error loading {}: ", id);
             return;
         }
-        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8);
+        Reader reader = new InputStreamReader(input);
         RawModel model = GSON.fromJson(reader, RawModel.class);
         Identifier fixed_identifier = new Identifier(id.getNamespace(), id.getPath().substring(7, id.getPath().length()-4));
         EntityTypeModelMap.addEntry(fixed_identifier, model.createCustomModel());
@@ -57,12 +64,12 @@ public class ModelLoader implements SimpleResourceReloadListener<Void> {
         return CompletableFuture.runAsync(() -> {
             EntityTypeModelMap.clearEntries();
             addModels(manager);
-        });
+        }, executor);
     }
 
     @Override
     public CompletableFuture<Void> apply(Void data, ResourceManager manager, Profiler profiler, Executor executor) {
-        return CompletableFuture.runAsync(((ModelRendererRebuilder) MinecraftClient.getInstance().getEntityRenderDispatcher())::rebuild);
+        return CompletableFuture.runAsync(((ModelRendererRebuilder) MinecraftClient.getInstance().getEntityRenderDispatcher())::rebuild, executor);
     }
 
     public static final Identifier ID = new Identifier("centime", "cem");

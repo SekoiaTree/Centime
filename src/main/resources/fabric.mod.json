@@ -11,7 +11,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "com.sekoia.centime.CentimeInit"
+      "com.sekoia.centime.Centime"
     ]
   },
   "mixins": [

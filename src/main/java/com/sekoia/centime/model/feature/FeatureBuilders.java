@@ -1,7 +1,7 @@
 package com.sekoia.centime.model.feature;
 
 import com.google.gson.JsonObject;
-import com.sekoia.centime.CentimeInit;
+import com.sekoia.centime.Centime;
 import com.sekoia.centime.model.CustomModel;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -12,6 +12,6 @@ public class FeatureBuilders {
     }
 
     private static void register(String name, FeatureBuilder builder) {
-        Registry.register(CentimeInit.FEATURE_BUILDER, name, builder);
+        Registry.register(Centime.FEATURE_BUILDER, name, builder);
     }
 }
