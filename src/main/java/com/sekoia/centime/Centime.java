@@ -26,7 +26,7 @@ public class Centime implements ClientModInitializer {
         FeatureBuilders.registerFeatureBuilders();
         MinecraftClient.getInstance().execute(() -> {
             ModelLoader loader = new ModelLoader();
-            ((ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager()).registerListener(loader);
+            ((ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager()).registerReloader(loader);
             loader.addModels(MinecraftClient.getInstance().getResourceManager());
             ((ModelRendererRebuilder) MinecraftClient.getInstance().getEntityRenderDispatcher()).rebuild();
         });
