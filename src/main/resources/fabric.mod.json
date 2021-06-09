@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "centime",
-  "version": "${version}",
+  "version": "0.0.1",
   "name": "Centime",
   "description": "",
   "authors": [],
@@ -18,8 +18,9 @@
     "centime.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.1",
+    "fabricloader": ">=0.11.3",
     "fabric": "*",
-    "minecraft": "1.16.5"
+    "minecraft": "1.17.x",
+    "java": ">=16"
   }
 }
